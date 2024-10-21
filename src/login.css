@@ -1,0 +1,126 @@
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Center the login container */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 36px;
+}
+
+/* Styling the form */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.login-form label {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.login-form input {
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Button styling */
+.login-btn {
+  padding: 10px;
+  background-color: rgb(95, 93, 93); /* Adjust color as per your theme */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.login-btn:hover {
+  background-color: #555; /* Slightly darker on hover */
+}
+
+p {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+a {
+  color: #778a9b;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+.signup-container {
+    display: flex;
+    flex-direction: column; /* Stack inputs vertically */
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 700px; /* Set max-width for form */
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 10px;
+  }
+  
+  .signup-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #fff; /* White text */
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .signup-form label {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #fff; /* White text for labels */
+  }
+  
+  .signup-form input {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 18px;
+  }
+  
+  .signup-form input[type="submit"] {
+    background-color: rgb(95, 93, 93); /* Adjust color as per your theme */
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 10px;
+  }
+  
+  .signup-form input[type="submit"]:hover {
+    background-color: #555; /* Slightly darker on hover */
+}
+  
+  /* Centering the signup prompt text */
+  .auth-buttons p {
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 20px;
+  }
