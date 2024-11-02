@@ -1,0 +1,86 @@
+.find-song-container {
+    position: absolute;
+    top: 60px; /* Adjust this to the navbar height */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: 100vw; /* Full viewport width */
+    padding: 60px; /* Padding for spacing */
+    background-color: transparent;
+    overflow: hidden; /* Prevents overall page scrolling */
+}
+
+h2 {
+    text-align: center;
+    color: white;
+}
+
+.find-song-form {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.find-song-form input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.find-song-form button {
+    padding: 10px 20px;
+    background-color: gray;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.find-song-form button:hover {
+    background-color: #323538;
+}
+
+.results-container {
+    max-height: 60vh; /* Limits height to 60% of the viewport */
+    overflow-y: auto; /* Enables vertical scroll */
+    padding-right: 10px; /* Optional padding to avoid scrollbars covering content */
+    margin-top: 20px; /* Space above results */
+}
+
+.result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.album-cover {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    padding: 10px;
+}
+
+.result-item h4 {
+    margin: 0;
+    font-size: 18px;
+    color: white;
+}
+
+.result-item p {
+    margin: 5px 0;
+    color: white;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}

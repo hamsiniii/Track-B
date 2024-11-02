@@ -1,18 +1,33 @@
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom"; // Correct imports for Routes and Link
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom"; 
 import "./App.css";
-import Login from './Login.js'; // Import Login component
-import Signup from './Signup.js'; // Import Signup component
+import Login from './Login.js'; 
+import Signup from './Signup.js'; 
+import FindSong from "./FindSong.js";
+import Review from "./Review.js";
 
 function App() {
-  const [user, setUser] = useState(null); // State to hold the user info
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Retrieve user data from localStorage on app load
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setUser(null); 
+    localStorage.removeItem("user"); // Clear user data from localStorage
+    alert('Logged out successfully!'); 
+  };
 
   return (
     <Router>
       <div className="App">
-        <NavBar user={user} setUser={setUser} /> {/* Pass user and setUser to NavBar */}
+        <NavBar user={user} setUser={setUser} handleLogout={handleLogout} />
         <Routes>
-          {/* Define the Home route */}
           <Route
             path="/"
             element={
@@ -24,7 +39,8 @@ function App() {
               </div>
             }
           />
-          {/* Define Login and Signup routes */}
+          <Route path="/findsong" element={<FindSong/>}/>
+          <Route path="/reviews/:type/:id" element={<Review user={user} />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
@@ -33,22 +49,17 @@ function App() {
   );
 }
 
-const NavBar = ({ user, setUser }) => {
-  const handleLogout = () => {
-    setUser(null); // Clear user state on logout
-    alert('Logged out successfully!'); // You can redirect or show a toast message here
-  };
-
+const NavBar = ({ user, handleLogout }) => {
   return (
     <nav className="navbar">
       <ul className="nav-links">
         <li><Link to="/">Home</Link></li>
         <li><Link to="/top-charts">Top Charts</Link></li>
-        <li><Link to="/find-song">Find a Song</Link></li>
+        <li><Link to="/findsong">Find a Song</Link></li>
         <li><Link to="/my-reviews">My Reviews</Link></li>
       </ul>
       <div className="auth-buttons">
-        {user ? ( // If user is logged in, show their name
+        {user ? (
           <div className="user-container">
             <button 
               className="login-btn" 
@@ -60,7 +71,7 @@ const NavBar = ({ user, setUser }) => {
             </button>
           </div>
         ) : (
-          <Link to="/login"><button className="login-btn">Login</button></Link> // Link to login page
+          <Link to="/login"><button className="login-btn">Login</button></Link>
         )}
       </div>
     </nav>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom'; // To redirect after login
-import "./login.css"; // Ensure you have the appropriate CSS
+import { useNavigate } from 'react-router-dom'; 
+import "./login.css"; 
 
-function Login({ setUser }) { // Accept setUser as a prop to store the logged-in user's info
+function Login({ setUser }) { 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -10,7 +10,6 @@ function Login({ setUser }) { // Accept setUser as a prop to store the logged-in
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Send email and password to the backend
     const response = await fetch('http://localhost:5000/login', {
       method: 'POST',
       headers: {
@@ -22,10 +21,14 @@ function Login({ setUser }) { // Accept setUser as a prop to store the logged-in
     const data = await response.json();
 
     if (response.ok) {
-      // If login is successful, store the user info (could be stored in state or localStorage)
       alert('Login successful!');
-      setUser(data.user); // Set the logged-in user's data
-      navigate('/'); // Redirect to home or a different page
+      const userData = { id: data.user.id, name: data.user.name, email: data.user.email };
+      
+      // Set user state and save to localStorage
+      setUser(userData); 
+      localStorage.setItem("user", JSON.stringify(userData)); // Save user data in localStorage
+
+      navigate('/'); 
     } else {
       alert(`Error: ${data.message}`);
     }
