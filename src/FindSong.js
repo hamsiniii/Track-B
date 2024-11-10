@@ -8,12 +8,35 @@ const FindSong = () => {
   const [results, setResults] = useState([]);
   const [error, setError] = useState('');
 
+  const fetchArtistImage = async (artistId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/artist/image/${artistId}`);
+      return response.data.image ? `data:image/jpg;base64,${response.data.image}` : null;
+    } catch (err) {
+      console.error('Error fetching artist image:', err);
+      return null;
+    }
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.get(`http://localhost:5000/search?query=${query}`);
-      setResults(response.data); // Populate results with data from the backend
+      const fetchedResults = response.data;
+
+      // Fetch images for artist results
+      const updatedResults = await Promise.all(
+        fetchedResults.map(async (item) => {
+          if (item.type === 'artist') {
+            const image = await fetchArtistImage(item.id);
+            return { ...item, coverart: image }; // Add the image to the result
+          }
+          return item;
+        })
+      );
+
+      setResults(updatedResults); // Populate results with data from the backend, including images
       setError('');
     } catch (err) {
       setError('Error fetching search results.');
@@ -40,19 +63,20 @@ const FindSong = () => {
       <div className="results-container">
         {results.map((item) => (
           <Link
-            key={item.id} // Make sure this is the correct id from your database
-            to={`/reviews/${item.type}/${item.id}`} // Ensure type and id are passed correctly
-            className="result-item"
-          >
-            {item.coverart && (
-              <img src={item.coverart} alt={item.name} className="album-cover" />
-            )}
-            <div>
-              <h4>{item.name}</h4>
-              <p>Type: {item.type}</p>
-              {item.date && <p>Date: {new Date(item.date).toLocaleDateString()}</p>}
-            </div>
-          </Link>
+          key={item.id}
+          to={item.type === 'artist' ? `/artist/${item.id}` : `/reviews/${item.type}/${item.id}`}
+          className="result-item"
+        >
+          {item.coverart && (
+            <img src={item.coverart} alt={item.name} className="album-cover" />
+          )}
+          <div>
+            <h4>{item.name}</h4>
+            <p>Type: {item.type}</p>
+            {item.date && <p>Date of Birth/Release: {new Date(item.date).toLocaleDateString()}</p>}
+          </div>
+        </Link>
+        
         ))}
       </div>
     </div>

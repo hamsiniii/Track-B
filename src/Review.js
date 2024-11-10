@@ -41,7 +41,6 @@ const Review = ({ user }) => {
             }
         };
 
-
         fetchDetails();
         fetchReviews();
 
@@ -69,7 +68,7 @@ const Review = ({ user }) => {
                 id,
                 review: newReview,
                 rating,
-                userid: user.id, // Ensure you're using the correct property for the user ID
+                userid: user.id,
             });
             setNewReview('');
             setRating(0);
@@ -77,6 +76,16 @@ const Review = ({ user }) => {
             setReviews(updatedReviews.data);
         } catch (error) {
             console.error('Error submitting review:', error);
+        }
+    };
+
+    const handleDeleteReview = async (reviewId) => {
+        try {
+            await axios.delete(`http://localhost:5000/reviews/${reviewId}`);
+            const updatedReviews = await axios.get(`http://localhost:5000/reviews/${type}/${id}`);
+            setReviews(updatedReviews.data);
+        } catch (error) {
+            console.error('Error deleting review:', error);
         }
     };
 
@@ -113,7 +122,6 @@ const Review = ({ user }) => {
                             ? Number(details.average_rating).toFixed(2)
                             : '-'}
                     </p>
-
                 </div>
                 <img src={details.coverart} alt={details.name} className="cover-art" />
             </div>
@@ -143,18 +151,32 @@ const Review = ({ user }) => {
 
             <h3>Reviews</h3>
             <ul className="reviews-list">
-                {reviews.map((review, index) => (
-                    <li key={index} className="review-item">
+                {reviews.map((review) => (
+                    <li key={review.reviewid} className="review-item">
                         <div className="review-header">
-                            <strong>{review.username}</strong>
-                            <span className="review-date"> ({new Date(review.date).toLocaleDateString()})</span>
-                            <div className="review-rating">
-                                {Array.from({ length: review.rating }, (_, i) => (
-                                    <span key={i} className="star filled">★</span>
-                                ))}
-                            </div>
+                            <strong>
+                                {review.username}
+                            </strong>
+                            <span className="review-header">
+                                {review.user_role === 'critic' && (
+                                    <span className="badge">
+                                        <img src="https://www.freeiconspng.com/uploads/silver-medal-icon-blank-44.png" alt="Critic Badge" className="critic-icon" />
+                                    </span>
+                                )}
+                                ({new Date(review.date).toLocaleDateString()})
+                            </span>
+                        </div>
+                        <div className="review-rating">
+                            {Array.from({ length: review.rating }, (_, i) => (
+                                <span key={i} className="star filled">★</span>
+                            ))}
                         </div>
                         <p>{review.review}</p>
+                        {user && user.id === review.userid && ( // Show delete button only for current user's reviews
+                            <button onClick={() => handleDeleteReview(review.reviewid)} className="delete-review">
+                                Delete
+                            </button>
+                        )}
                     </li>
                 ))}
             </ul>

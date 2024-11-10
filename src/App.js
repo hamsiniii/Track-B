@@ -5,7 +5,7 @@ import Login from './Login.js';
 import Signup from './Signup.js'; 
 import FindSong from "./FindSong.js";
 import Review from "./Review.js";
-
+import ArtistDetails from "./ArtistDetails.js";
 function App() {
   const [user, setUser] = useState(null);
 
@@ -39,7 +39,8 @@ function App() {
               </div>
             }
           />
-          <Route path="/findsong" element={<FindSong/>}/>
+<Route path="/artist/:id" element={<ArtistDetails />} />  {/* Use element prop instead of component */}
+<Route path="/findsong" element={<FindSong/>}/>
           <Route path="/reviews/:type/:id" element={<Review user={user} />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
           <Route path="/signup" element={<Signup />} />

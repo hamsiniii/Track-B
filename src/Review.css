@@ -17,7 +17,7 @@ h2 {
 p {
     font-size: large;
 }
-h3{
+h3 {
     padding-top: 20px;
 }
 
@@ -25,26 +25,26 @@ h3{
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-    background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    padding: 20px; /* Add padding for spacing */
+    padding: 20px;
 }
 
 .info {
     flex: 1;
-    margin-right: 20px; /* Space between info and cover art */
+    margin-right: 20px;
 }
 
 .cover-art {
-    width: 150px; /* Set a fixed width for the cover art */
-    height: auto; /* Keep the aspect ratio */
+    width: 150px;
+    height: auto;
     object-fit: cover;
-    border-radius: 8px; /* Rounded corners */
+    border-radius: 8px;
 }
 
 .review-form {
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
+    flex-direction: column;
     margin-top: 20px;
 }
 
@@ -54,8 +54,8 @@ h3{
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
-    margin-bottom: 10px; /* Space below the textarea */
-    resize: vertical; /* Allow vertical resizing */
+    margin-bottom: 10px;
+    resize: vertical;
 }
 
 .submit-review {
@@ -71,23 +71,41 @@ h3{
 }
 
 .submit-review:hover {
-    background-color: #323538; /* Darker gray on hover */
+    background-color: #323538;
 }
 
 .reviews-list {
-    list-style: none; /* Remove bullet points */
+    list-style: none;
     padding: 0;
-    margin: 20px 0; /* Space above and below the list */
+    margin: 20px 0;
+    max-height: 400px; /* Limits the height for scrolling */
+    overflow-y: auto; /* Enables vertical scrolling */
+    width: 100%;
 }
 
+/* Invisible scrollbar styling */
+.reviews-list::-webkit-scrollbar {
+    width: 8px; /* Thin scrollbar width */
+}
+
+.reviews-list::-webkit-scrollbar-thumb {
+    background-color: transparent; /* Invisible by default */
+    border-radius: 10px;
+}
+
+.reviews-list:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3); /* Visible on hover */
+}
+
+/* Review item styling */
 .review-item {
     padding: 10px;
     border-bottom: 1px solid #ddd;
-    color: white; /* Text color for reviews */
+    color: white;
 }
 
 .review-item:last-child {
-    border-bottom: none; /* Remove border from last item */
+    border-bottom: 1px solid #ddd;
 }
 
 .error-message {
@@ -110,4 +128,42 @@ h3{
 
 .rating .star.filled {
     color: gold;
+}
+
+.review-rating {
+    padding-top: 10px;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    color: gold;
+}
+
+.critic-icon {
+    width: 20px;
+    height: auto;
+    vertical-align: middle;
+}
+
+.delete-review {
+    padding: 5px 10px;
+    margin-top: 10px;
+    font-size: small;
+    color: white;
+    background-color: red; /* You can choose any color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.delete-review:hover {
+    background-color: darkred; /* Darker red on hover */
 }

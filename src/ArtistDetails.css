@@ -1,0 +1,85 @@
+/* ArtistDetails.css */
+
+.artist-details-container {
+  position: absolute;
+  top: 80px; /* Adjust this to your navbar height */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20px; /* Padding for a small margin */
+  background-color: transparent; /* Semi-transparent background */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  overflow: hidden;
+}
+
+.artist-details-flex {
+  display: flex; /* Using flexbox to align the text and image */
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 90%;
+  margin-bottom: 20px;
+}
+
+h2 {
+  text-align: left;
+  color: white;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+h3 {
+  padding-top: 20px;
+  font-size: 1.5em;
+  color: white;
+}
+
+p {
+  font-size: large;
+  color: #f0f0f0;
+}
+
+.artist-info {
+  flex: 1;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.artist-image {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+
+.artist-image img {
+  width: 300px; /* Fixed width */
+  height: 300px; /* Fixed height */
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid white;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Scrollbar Styling */
+.artist-details-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.artist-details-container::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Hidden by default */
+  border-radius: 10px;
+}
+
+.artist-details-container:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3); /* Visible on hover */
+}

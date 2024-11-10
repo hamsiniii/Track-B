@@ -95,7 +95,6 @@ app.post('/login', (req, res) => {
 app.get('/search', (req, res) => {
   const { query } = req.query;
 
-  // SQL query to search for songs, albums, and artists
   const sql = `
     SELECT 'song' as type, songid as id, name, releasedate as date, coverart 
     FROM song WHERE name LIKE ? 
@@ -103,16 +102,36 @@ app.get('/search', (req, res) => {
     SELECT 'album' as type, albumid as id, name, releasedate as date, coverart 
     FROM album WHERE name LIKE ?
     UNION 
-    SELECT 'artist' as type, CONCAT(fname, ' ', lname) as name, artistid as id, dob as date, NULL as coverart 
+    SELECT 'artist' as type, artistid as id, CONCAT(fname, ' ', lname) as name, dob as date, NULL as coverart 
     FROM artist WHERE fname LIKE ? OR lname LIKE ?`;
 
-  db.query(sql, [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`,`%${query}%`], (err, results) => {
+  db.query(sql, [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`], (err, results) => {
     if (err) {
       console.error('Error querying database:', err);
       return res.status(500).json({ message: 'Database error' });
     }
     console.log('Search Results:', results);
-    res.json(results); // Return the search results
+    res.json(results);
+  });
+});
+
+// New endpoint to fetch artist image
+app.get('/artist/image/:id', (req, res) => {
+  const artistId = req.params.id;
+
+  const sql = 'SELECT image FROM artist WHERE artistid = ?';
+  db.query(sql, [artistId], (err, results) => {
+    if (err) {
+      console.error('Error querying database:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+
+    if (results.length > 0) {
+      const image = results[0].image;
+      res.json({ image: image.toString('base64') }); // Convert buffer to base64 string
+    } else {
+      res.status(404).json({ message: 'Artist not found' });
+    }
   });
 });
 app.get('/details/album/:id', (req, res) => {
@@ -162,10 +181,13 @@ app.get('/reviews/:type/:id', (req, res) => {
 
   const sql = `
       SELECT 
+        r.reviewid AS reviewid,
         r.comment AS review,
         r.rating,
         r.date,
-        u.name AS username 
+        u.userid AS userid,
+        u.name AS username,
+        u.role AS user_role 
       FROM review r 
       JOIN user u ON r.userid = u.userid 
       WHERE ${type}id = ?`;
@@ -178,16 +200,38 @@ app.get('/reviews/:type/:id', (req, res) => {
       
       console.log('Reviews fetched:', results); // Log the results
       const reviews = results.map(row => ({
+          reviewid:row.reviewid,
           review: row.review,
           rating: row.rating,
           date: row.date,
+          userid: row.userid,
           username: row.username,
+          user_role: row.user_role
       }));
 
       res.json(reviews);
   });
 });
 
+app.delete('/reviews/:reviewId', (req, res) => {
+  const reviewId = req.params.reviewId;
+
+  // SQL query to delete the review
+  const query = 'DELETE FROM review WHERE reviewid = ?';
+
+  db.query(query, [reviewId], (error, results) => {
+      if (error) {
+          console.error('Error deleting review:', error);
+          return res.status(500).json({ message: 'Error deleting review.' });
+      }
+      
+      if (results.affectedRows === 0) {
+          return res.status(404).json({ message: 'Review not found.' });
+      }
+
+      return res.status(200).json({ message: 'Review deleted successfully.' });
+  });
+});
 
 app.post('/reviews', (req, res) => {
   const { type, id, review, rating, userid } = req.body;
@@ -216,6 +260,64 @@ app.post('/reviews', (req, res) => {
       res.status(201).json({ message: 'Review submitted successfully' });
   });
 });
+app.get('/artist/:id', (req, res) => {
+  const artistId = req.params.id;
+
+  // Query to get artist details
+  db.query('SELECT fname, lname, dob, about, image FROM artist WHERE artistid = ?', [artistId], (err, artistResults) => {
+    if (err) {
+      console.error('Error fetching artist details:', err);
+      return res.status(500).json({ message: 'Server error' });
+    }
+
+    if (artistResults.length === 0) {
+      return res.status(404).json({ message: 'Artist not found' });
+    }
+
+    // Log artist details for debugging
+    console.log('Artist Details:', artistResults);
+
+    // Query to get albums by artist
+    db.query('SELECT album.albumid, name FROM album JOIN artistalbum ON album.albumid = artistalbum.albumid WHERE artistid = ?', [artistId], (err, albumResults) => {
+      if (err) {
+        console.error('Error fetching albums:', err);
+        return res.status(500).json({ message: 'Server error' });
+      }
+
+      // Log album details for debugging
+      console.log('Album Results:', albumResults);
+
+      // Combine artist details and albums in one response
+      const artistData = {
+        ...artistResults[0],
+        image: artistResults[0].image ? artistResults[0].image.toString('base64') : null,
+        albums: albumResults || []  // Ensure albums is an empty array if none are found
+      };
+
+      // Log the final artist data
+      console.log('Combined Artist Data:', artistData);
+
+      res.json(artistData);
+    });
+  });
+});
+
+
+
+// Assuming Express and MySQL are already set up
+// In your Express server
+app.get('/details/artist/:id', async (req, res) => {
+  try {
+      const artistId = req.params.id;
+      const artistDetails = await db.query('SELECT * FROM artist WHERE artistid = ?', [artistId]);
+      const albums = await db.query('SELECT * FROM album WHERE artistid = ?', [artistId]);
+      res.json({ artist: artistDetails[0], albums });
+  } catch (error) {
+      console.error("Error fetching artist details:", error);
+      res.status(500).send("Server error");
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
