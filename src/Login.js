@@ -22,11 +22,10 @@ function Login({ setUser }) {
 
     if (response.ok) {
       alert('Login successful!');
-      const userData = { id: data.user.id, name: data.user.name, email: data.user.email };
+      const userData = { id: data.user.id, name: data.user.name, email: data.user.email, role: data.user.role };
       
-      // Set user state and save to localStorage
       setUser(userData); 
-      localStorage.setItem("user", JSON.stringify(userData)); // Save user data in localStorage
+      localStorage.setItem("user", JSON.stringify(userData)); 
 
       navigate('/'); 
     } else {

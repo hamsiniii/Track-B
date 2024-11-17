@@ -12,14 +12,13 @@ body, html, .App {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-image: url('/tbbg.jpg'); /* Adjusted path */
+  background-image: url('/tbbg.jpg'); 
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color: #fff; /* Default text color to white */
+  color: #fff; 
 }
 
-/* Navigation Bar */
 .navbar {
   position: absolute;
   top: 0;
@@ -27,7 +26,7 @@ body, html, .App {
   display: flex;
   justify-content: space-between;
   padding: 20px 50px;
-  background: transparent; /* Transparent background */
+  background: transparent; 
 }
 
 .nav-links {
@@ -41,43 +40,41 @@ body, html, .App {
 
 .nav-links a {
   text-decoration: none;
-  color: #fff; /* White text */
-  font-size: 28px; /* Increased font size */
-  transition: color 0.3s; /* Smooth transition */
+  color: #fff;
+  font-size: 28px; 
+  transition: color 0.3s; 
 }
 
 .user-name {
   text-decoration: none;
-  color: #fff; /* White text */
-  font-size: 28px; /* Increased font size */
+  color: #fff; 
+  font-size: 28px; 
 }
 
 .nav-links a:hover {
-  color: rgba(112, 105, 106, 0.8); /* Lighter pink for hover effect */
+  color: rgba(112, 105, 106, 0.8); 
 }
 
-/* Auth Buttons */
 .auth-buttons {
   display: flex;
 }
 
 .auth-buttons .login-btn, .auth-buttons .signup-btn {
-  background-color: rgb(95, 93, 93); /* Gray color */
+  background-color: rgb(95, 93, 93); 
   border: none;
-  padding: 10px 20px; /* Increased padding */
+  padding: 10px 20px; 
   border-radius: 20px;
   margin-left: 10px;
   cursor: pointer;
   font-size: 28px;
-  color: #fff; /* White text for buttons */
-  transition: background-color 0.3s; /* Smooth transition */
+  color: #fff; 
+  transition: background-color 0.3s; 
 }
 
 .auth-buttons .login-btn:hover, .auth-buttons .signup-btn:hover {
-  background-color: rgba(255, 255, 255, 0.3); /* Soft transparent hover effect */
+  background-color: rgba(255, 255, 255, 0.3); 
 }
 
-/* Home Page Content */
 .home-container {
   text-align: center;
   padding: 30px;
@@ -86,51 +83,50 @@ body, html, .App {
 }
 
 .home-title {
-  font-size: 72px; /* Increased font size */
-  color: #fff; /* White title color */
+  font-size: 72px; 
+  color: #fff; 
 }
 
 .home-description {
-  font-size: 30px; /* Increased description font size */
-  color: #fff; /* White description color */
+  font-size: 30px; 
+  color: #fff; 
   margin-top: 10px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .home-title {
-    font-size: 48px; /* Smaller title on mobile */
+    font-size: 48px; 
   }
   
   .home-description {
-    font-size: 24px; /* Smaller description on mobile */
+    font-size: 24px; 
   }
 
   .auth-buttons .login-btn, .auth-buttons .signup-btn {
-    font-size: 20px; /* Smaller buttons on mobile */
+    font-size: 20px; 
   }
 }
 .user-dropdown {
-  position: relative; /* Set position for the dropdown */
+  position: relative; 
 }
 
 .dropdown-menu {
-  position: absolute; /* Position it under the user name */
-  background-color: transparent; /* White background with transparency */
+  position: absolute; 
+  background-color: transparent; 
 }
 
 .dropdown-menu button {
-  background-color: rgb(95, 93, 93); /* Gray color */
+  background-color: rgb(95, 93, 93); 
   border: none;
-  padding: 10px 20px; /* Increased padding */
+  padding: 10px 20px; 
   border-radius: 20px;
   margin-left: 10px;
   cursor: pointer;
   font-size: 18px;
-  color: #fff; /* White text for buttons */
+  color: #fff;
   transition: background-color 0.3s;
 }
 
 .dropdown-menu button:hover {
-  background-color: rgba(255, 255, 255, 0.3); /* Soft transparent hover effect */
+  background-color: rgba(255, 255, 255, 0.3); 
 }

@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const crypto = require('crypto'); // Import the crypto module
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,12 +12,21 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MySQL connection
-const db = mysql.createConnection({
+const dbAdmin = mysql.createConnection({
   host: 'localhost',
-  user: 'badmin', // replace with your MySQL username
-  password: 'securepassword', // replace with your MySQL password
-  database: 'trackb' // replace with your database name
+  user: 'admin', 
+  password: 'your_password_here', 
+  database: 'trackb'
 });
+
+const dbUser = mysql.createConnection({
+  host: 'localhost',
+  user: 'badmin', 
+  password: 'securepassword',
+  database: 'trackb'
+});
+
+let db=dbUser; 
 
 db.connect(err => {
   if (err) {
@@ -27,9 +36,9 @@ db.connect(err => {
   console.log('Connected to MySQL');
 });
 
-// Function to hash a password
+// Hash password
 const hashPassword = (password) => {
-  const hash = crypto.createHash('sha256'); // You can also use 'sha512'
+  const hash = crypto.createHash('sha256'); 
   hash.update(password);
   return hash.digest('hex');
 };
@@ -38,7 +47,6 @@ const hashPassword = (password) => {
 app.post('/signup', (req, res) => {
   const { name, password, email, role } = req.body;
   
-  // Hash the password before storing it
   const hashedPassword = hashPassword(password);
   
   const sql = 'INSERT INTO user (name, password, email, role) VALUES (?, ?, ?, ?)';
@@ -51,47 +59,64 @@ app.post('/signup', (req, res) => {
   });
 });
 
-// Login endpoint
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
+  const hashedInputPassword = hashPassword(password);
 
-  // Hash the input password for comparison
-  const hashedInputPassword = hashPassword(password); // Use your existing hash function
-
-  // Query the database for a user with the provided email
   const query = 'SELECT * FROM user WHERE email = ?';
-  db.query(query, [email], (error, results) => {
+  dbUser.query(query, [email], (error, results) => {
     if (error) {
       return res.status(500).json({ message: 'Error connecting to the database' });
     }
 
     if (results.length > 0) {
-      // User found, check the hashed password
       const user = results[0];
-
-      // Compare the hashed input password with the stored password
       if (user.password === hashedInputPassword) {
-        // Password matches
-        res.json({ 
-          message: 'Login successful', 
-          user: { 
-            id: user.userid,  // Include user ID
-            name: user.name, 
-            email: user.email 
-          } 
+        db = user.role === 'admin' ? dbAdmin : dbUser;
+
+        res.json({
+          message: 'Login successful',
+          user: {
+            id: user.userid,
+            name: user.name,
+            email: user.email,
+            role: user.role 
+          }
         });
       } else {
-        // Password does not match
         res.status(401).json({ message: 'Invalid email or password' });
       }
     } else {
-      // No user found
       res.status(401).json({ message: 'Invalid email or password' });
     }
   });
 });
+app.get('/reviews/user/:userid', async (req, res) => {
+  const userId = req.params.userid;
+  const query = `
+    SELECT 
+      r.reviewid,
+      r.comment,
+      r.rating,
+      r.date,
+      s.name AS songName,
+      a.name AS albumName
+    FROM review r
+    LEFT JOIN song s ON r.songid = s.songid
+    LEFT JOIN album a ON r.albumid = a.albumid
+    WHERE r.userid = ?
+  `;
+  
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("Error fetching reviews:", err);
+      return res.status(500).json({ message: "Error fetching reviews" });
+    }
+    
+    res.json({ reviews: results });
+  });
+});
 
-// Search endpoint
 app.get('/search', (req, res) => {
   const { query } = req.query;
 
@@ -115,7 +140,7 @@ app.get('/search', (req, res) => {
   });
 });
 
-// New endpoint to fetch artist image
+// Fetch artist image
 app.get('/artist/image/:id', (req, res) => {
   const artistId = req.params.id;
 
@@ -128,7 +153,7 @@ app.get('/artist/image/:id', (req, res) => {
 
     if (results.length > 0) {
       const image = results[0].image;
-      res.json({ image: image.toString('base64') }); // Convert buffer to base64 string
+      res.json({ image: image.toString('base64') }); 
     } else {
       res.status(404).json({ message: 'Artist not found' });
     }
@@ -143,12 +168,11 @@ app.get('/details/album/:id', (req, res) => {
       return res.status(500).json({ message: 'Error fetching album details' });
     }
     
-    // Return the album details
     res.json(results[0][0]); 
   });
 });
 
-// New endpoint to fetch songs by album ID
+// Fetch songs by album ID
 app.get('/details/album/:id/songs', (req, res) => {
   const { id } = req.params;
 
@@ -158,8 +182,7 @@ app.get('/details/album/:id/songs', (req, res) => {
       return res.status(500).json({ message: 'Error fetching songs' });
     }
     
-    // Return the list of songs
-    res.json(results[0]); // Assuming the songs are in the first result set
+    res.json(results[0]); 
   });
 });
 
@@ -172,7 +195,7 @@ app.get('/details/song/:id', (req, res) => {
       return res.status(500).json({ message: 'Error fetching song details' });
     }
     
-    res.json(results[0][0]); // Return the song details
+    res.json(results[0][0]); 
   });
 });
 
@@ -198,7 +221,7 @@ app.get('/reviews/:type/:id', (req, res) => {
           return res.status(500).json({ message: 'Database error' });
       }
       
-      console.log('Reviews fetched:', results); // Log the results
+      console.log('Reviews fetched:', results); 
       const reviews = results.map(row => ({
           reviewid:row.reviewid,
           review: row.review,
@@ -216,7 +239,6 @@ app.get('/reviews/:type/:id', (req, res) => {
 app.delete('/reviews/:reviewId', (req, res) => {
   const reviewId = req.params.reviewId;
 
-  // SQL query to delete the review
   const query = 'DELETE FROM review WHERE reviewid = ?';
 
   db.query(query, [reviewId], (error, results) => {
@@ -236,11 +258,10 @@ app.delete('/reviews/:reviewId', (req, res) => {
 app.post('/reviews', (req, res) => {
   const { type, id, review, rating, userid } = req.body;
 
-  console.log('Received review data:', { type, id, review, rating, userid }); // Log incoming review data
+  console.log('Received review data:', { type, id, review, rating, userid }); 
 
-  // Ensure that `rating` and `userid` are provided
   if (!rating || !userid) {
-      console.error('Missing rating or user ID'); // Log missing data
+      console.error('Missing rating or user ID'); 
       return res.status(400).json({ message: 'Rating and user login are required' });
   }
 
@@ -253,17 +274,17 @@ app.post('/reviews', (req, res) => {
 
   db.query(sql, [rating, review, date, songid, albumid, userid], (err, result) => {
       if (err) {
-          console.error('Error inserting review:', err); // Log database errors
+          console.error('Error inserting review:', err); 
           return res.status(500).json({ message: 'Database error' });
       }
-      console.log('Review submitted successfully:', result); // Log success
+      console.log('Review submitted successfully:', result);
       res.status(201).json({ message: 'Review submitted successfully' });
   });
 });
 app.get('/artist/:id', (req, res) => {
   const artistId = req.params.id;
 
-  // Query to get artist details
+  // artist details
   db.query('SELECT fname, lname, dob, about, image FROM artist WHERE artistid = ?', [artistId], (err, artistResults) => {
     if (err) {
       console.error('Error fetching artist details:', err);
@@ -274,38 +295,74 @@ app.get('/artist/:id', (req, res) => {
       return res.status(404).json({ message: 'Artist not found' });
     }
 
-    // Log artist details for debugging
-    console.log('Artist Details:', artistResults);
-
-    // Query to get albums by artist
+    // albums by artist
     db.query('SELECT album.albumid, name FROM album JOIN artistalbum ON album.albumid = artistalbum.albumid WHERE artistid = ?', [artistId], (err, albumResults) => {
       if (err) {
         console.error('Error fetching albums:', err);
         return res.status(500).json({ message: 'Server error' });
       }
 
-      // Log album details for debugging
-      console.log('Album Results:', albumResults);
+      // songs by artist
+      db.query('SELECT song.songid, name FROM song JOIN artistsong ON song.songid = artistsong.songid WHERE artistid = ?', [artistId], (err, songResults) => {
+        if (err) {
+          console.error('Error fetching songs:', err);
+          return res.status(500).json({ message: 'Server error' });
+        }
 
-      // Combine artist details and albums in one response
-      const artistData = {
-        ...artistResults[0],
-        image: artistResults[0].image ? artistResults[0].image.toString('base64') : null,
-        albums: albumResults || []  // Ensure albums is an empty array if none are found
-      };
+        // average rating of all songs and albums
+        db.query(
+          `SELECT AVG(rating) AS avgRating
+           FROM review
+           WHERE albumid IN (SELECT albumid FROM artistalbum WHERE artistid = ?) 
+           OR songid IN (SELECT songid FROM artistsong WHERE artistid = ?)`,
+          [artistId, artistId],
+          (err, ratingResults) => {
+            if (err) {
+              console.error('Error fetching average rating:', err);
+              return res.status(500).json({ message: 'Server error' });
+            }
 
-      // Log the final artist data
-      console.log('Combined Artist Data:', artistData);
+            const avgRating = ratingResults[0].avgRating || null;
 
-      res.json(artistData);
+            //reviews for artist's songs and albums
+            db.query(
+              `SELECT review.comment, review.rating, review.date, 
+                      COALESCE(album.name, song.name) AS name,
+                      COALESCE(album.albumid, song.songid) AS itemId,
+                      IF(album.albumid IS NOT NULL, 'album', 'song') AS type
+               FROM review
+               LEFT JOIN album ON review.albumid = album.albumid
+               LEFT JOIN song ON review.songid = song.songid
+               WHERE review.albumid IN (SELECT albumid FROM artistalbum WHERE artistid = ?)
+                  OR review.songid IN (SELECT songid FROM artistsong WHERE artistid = ?)`,
+              [artistId, artistId],
+              (err, reviewResults) => {
+                if (err) {
+                  console.error('Error fetching reviews:', err);
+                  return res.status(500).json({ message: 'Server error' });
+                }
+
+                const artistData = {
+                  ...artistResults[0],
+                  image: artistResults[0].image ? artistResults[0].image.toString('base64') : null,
+                  albums: albumResults || [],
+                  songs: songResults || [],
+                  avgRating,
+                  reviews: reviewResults || []
+                };
+
+                res.json(artistData);
+              }
+            );
+          }
+        );
+      });
     });
   });
 });
 
 
 
-// Assuming Express and MySQL are already set up
-// In your Express server
 app.get('/details/artist/:id', async (req, res) => {
   try {
       const artistId = req.params.id;
@@ -317,6 +374,147 @@ app.get('/details/artist/:id', async (req, res) => {
       res.status(500).send("Server error");
   }
 });
+// edit a review
+app.put('/review/:id', (req, res) => {
+  const reviewId = req.params.id;
+  const { comment, rating } = req.body;
+
+  const query = "UPDATE review SET comment = ?, rating = ? WHERE reviewid = ?";
+
+  db.query(query, [comment, rating, reviewId], (err, results) => {
+    if (err) {
+      console.error("Error updating review:", err);
+      return res.status(500).json({ message: "Error updating review" });
+    }
+
+    if (results.affectedRows > 0) {
+      return res.status(200).json({ message: "Review updated successfully" });
+    } else {
+      return res.status(404).json({ message: "Review not found" });
+    }
+  });
+});
+app.get('/topcharts', (req, res) => {
+  const { category } = req.query;
+  let sql = '';
+
+  if (category === 'artists') {
+    // average rating for artists
+    sql = `
+      SELECT 
+        artist.artistid, 
+        fname, 
+        lname, 
+        COALESCE(AVG(review.rating), 0) AS avg_rating
+      FROM 
+        artist
+      LEFT JOIN 
+        artistalbum ON artist.artistid = artistalbum.artistid
+      LEFT JOIN 
+        album ON artistalbum.albumid = album.albumid
+      LEFT JOIN 
+        review ON review.albumid = album.albumid OR review.songid IN (
+          SELECT song.songid FROM song
+          JOIN albumsong ON song.songid = albumsong.songid
+          WHERE albumsong.albumid = album.albumid
+        )
+      GROUP BY 
+        artist.artistid
+      ORDER BY 
+        avg_rating DESC
+      LIMIT 10;
+    `;
+  } else if (category === 'albums') {
+    sql = `
+      SELECT album.albumid, name, coverart, COALESCE(AVG(rating), 0) AS avg_rating 
+      FROM album 
+      LEFT JOIN review ON album.albumid = review.albumid 
+      GROUP BY album.albumid 
+      ORDER BY avg_rating DESC 
+      LIMIT 10;
+    `;
+  } else if (category === 'songs') {
+    sql = `
+      SELECT song.songid, name, coverart, COALESCE(AVG(rating), 0) AS avg_rating 
+      FROM song 
+      LEFT JOIN review ON song.songid = review.songid 
+      GROUP BY song.songid 
+      ORDER BY avg_rating DESC 
+      LIMIT 10;
+    `;
+  }
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error fetching top charts:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    res.json(results);
+  });
+});
+
+
+app.use('/admin', (req, res) => {
+  // Admin 
+  res.send('Admin page');
+});
+
+app.post('/api/admin/insert/song', (req, res) => {
+  const { name, releasedate, coverart, genre } = req.body;
+
+  const sql = 'INSERT INTO song (name, releasedate, coverart) VALUES (?, ?, ?)';
+  dbAdmin.query(sql, [name, releasedate, coverart, genre], (err, result) => {
+    if (err) {
+      console.error('Error inserting song:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    res.status(201).json({ message: 'Song inserted successfully', songId: result.insertId });
+  });
+});
+app.post('/api/admin/insert/album', (req, res) => {
+  const { name, releasedate, coverart } = req.body;
+
+  const sql = 'INSERT INTO album (name, releasedate, coverart) VALUES (?, ?, ?)';
+  dbAdmin.query(sql, [name, releasedate, coverart], (err, result) => {
+    if (err) {
+      console.error('Error inserting album:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    res.status(201).json({ message: 'Album inserted successfully', albumId: result.insertId });
+  });
+});
+app.post('/api/admin/execute-query', (req, res) => {
+  const { query } = req.body;
+
+  dbAdmin.beginTransaction((err) => {
+    if (err) {
+      console.error('Error starting transaction:', err);
+      return res.status(500).json({ message: 'Error starting transaction', error: err.message });
+    }
+
+    dbAdmin.query(query, (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+
+        return dbAdmin.rollback(() => {
+          res.status(500).json({ message: 'Error executing query', error: err.message });
+        });
+      }
+
+      dbAdmin.commit((err) => {
+        if (err) {
+          console.error('Error committing transaction:', err);
+          return dbAdmin.rollback(() => {
+            res.status(500).json({ message: 'Error committing transaction', error: err.message });
+          });
+        }
+
+        res.json({ message: 'Query executed and committed successfully', result });
+      });
+    });
+  });
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

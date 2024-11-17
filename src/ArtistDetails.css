@@ -1,85 +1,66 @@
 /* ArtistDetails.css */
 
 .artist-details-container {
-  position: absolute;
-  top: 80px; /* Adjust this to your navbar height */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 20px; /* Padding for a small margin */
-  background-color: transparent; /* Semi-transparent background */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 20px;
+  margin-top: 20px;
   color: white;
-  overflow: hidden;
+  width:90vw;
+  height:80vh
 }
 
 .artist-details-flex {
-  display: flex; /* Using flexbox to align the text and image */
+  display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  width: 90%;
-  margin-bottom: 20px;
-}
-
-h2 {
-  text-align: left;
-  color: white;
-  font-size: 2em;
-  margin-bottom: 10px;
-}
-
-h3 {
-  padding-top: 20px;
-  font-size: 1.5em;
-  color: white;
-}
-
-p {
-  font-size: large;
-  color: #f0f0f0;
 }
 
 .artist-info {
-  flex: 1;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  text-align: left;
+  max-width: 80%;
+  margin-right: 20px;
+}
+
+.artist-info h2 {
+  font-size: 2.5rem;
+  text-align: center;
+}
+
+.artist-info p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
 }
 
 .artist-image {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-left: 20px;
-}
-
-.artist-image img {
-  width: 300px; /* Fixed width */
-  height: 300px; /* Fixed height */
-  object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid white;
-}
-
-.error-message {
-  color: red;
-  text-align: center;
-  margin-top: 10px;
-}
-
-/* Scrollbar Styling */
-.artist-details-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.artist-details-container::-webkit-scrollbar-thumb {
-  background-color: transparent; /* Hidden by default */
+  width: 300px;
+  height: 300px;
   border-radius: 10px;
 }
 
-.artist-details-container:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3); /* Visible on hover */
+.artist-image img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.reviews-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.review-item {
+  margin-bottom: 15px;
+}
+
+.review-item h4 {
+  font-size: 1.2rem;
+  margin: 5px 0;
+}
+
+.review-item p {
+  font-size: 1rem;
+  margin: 3px 0;
 }

@@ -1,11 +1,10 @@
-/* Basic reset */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Center the login container */
 .login-container {
   display: flex;
   flex-direction: column;
@@ -19,7 +18,6 @@ h2 {
   font-size: 36px;
 }
 
-/* Styling the form */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -39,10 +37,9 @@ h2 {
   font-size: 16px;
 }
 
-/* Button styling */
 .login-btn {
   padding: 10px;
-  background-color: rgb(95, 93, 93); /* Adjust color as per your theme */
+  background-color: rgb(95, 93, 93); 
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -51,12 +48,12 @@ h2 {
 }
 
 .login-btn:hover {
-  background-color: #555; /* Slightly darker on hover */
+  background-color: #555; 
 }
 
 p {
   margin-top: 20px;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 a {
@@ -69,11 +66,11 @@ a:hover {
 }
 .signup-container {
     display: flex;
-    flex-direction: column; /* Stack inputs vertically */
+    flex-direction: column; 
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 700px; /* Set max-width for form */
+    max-width: 700px; 
     margin: 50px auto;
     padding: 30px;
     border-radius: 10px;
@@ -82,7 +79,7 @@ a:hover {
   .signup-title {
     font-size: 36px;
     margin-bottom: 20px;
-    color: #fff; /* White text */
+    color: #fff; 
   }
   
   .signup-form {
@@ -94,7 +91,7 @@ a:hover {
   .signup-form label {
     margin-bottom: 10px;
     font-size: 18px;
-    color: #fff; /* White text for labels */
+    color: #fff; 
   }
   
   .signup-form input {
@@ -106,7 +103,7 @@ a:hover {
   }
   
   .signup-form input[type="submit"] {
-    background-color: rgb(95, 93, 93); /* Adjust color as per your theme */
+    background-color: rgb(95, 93, 93); 
     color: #fff;
     cursor: pointer;
     font-size: 18px;
@@ -114,10 +111,9 @@ a:hover {
   }
   
   .signup-form input[type="submit"]:hover {
-    background-color: #555; /* Slightly darker on hover */
+    background-color: #555; 
 }
   
-  /* Centering the signup prompt text */
   .auth-buttons p {
     color: #fff;
     font-size: 18px;

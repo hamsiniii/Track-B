@@ -1,13 +1,12 @@
 .review-container {
     position: absolute;
-    top: 60px; /* Adjust this to the navbar height */
+    top: 60px; 
     left: 0;
     right: 0;
     bottom: 0;
-    max-width: 100vw; /* Full viewport width */
-    padding: 60px; /* Padding for spacing */
+    max-width: 100vw; 
+    padding: 60px; 
     background-color: transparent;
-    overflow: hidden; /* Prevents overall page scrolling */
 }
 
 h2 {
@@ -34,7 +33,15 @@ h3 {
     flex: 1;
     margin-right: 20px;
 }
+.rating .star {
+    cursor: pointer;
+    font-size: 24px;
+    color: lightgray;
+}
 
+.rating .star.filled {
+    color: gold; 
+}
 .cover-art {
     width: 150px;
     height: auto;
@@ -78,23 +85,22 @@ h3 {
     list-style: none;
     padding: 0;
     margin: 20px 0;
-    max-height: 400px; /* Limits the height for scrolling */
-    overflow-y: auto; /* Enables vertical scrolling */
+    max-height: 400px; 
+    overflow-y: auto; 
     width: 100%;
 }
 
-/* Invisible scrollbar styling */
 .reviews-list::-webkit-scrollbar {
-    width: 8px; /* Thin scrollbar width */
+    width: 8px; 
 }
 
 .reviews-list::-webkit-scrollbar-thumb {
-    background-color: transparent; /* Invisible by default */
+    background-color: transparent; 
     border-radius: 10px;
 }
 
 .reviews-list:hover::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.3); /* Visible on hover */
+    background-color: rgba(255, 255, 255, 0.3); 
 }
 
 /* Review item styling */
@@ -120,32 +126,18 @@ h3 {
     gap: 5px;
 }
 
-.rating .star {
-    cursor: pointer;
-    font-size: 24px;
-    color: lightgray;
-}
 
-.rating .star.filled {
-    color: gold;
-}
 
 .review-rating {
     padding-top: 10px;
 }
+
 
 .review-header {
     display: flex;
     align-items: center;
     gap: 10px;
 }
-
-.badge {
-    display: inline-flex;
-    align-items: center;
-    color: gold;
-}
-
 .critic-icon {
     width: 20px;
     height: auto;
@@ -157,7 +149,7 @@ h3 {
     margin-top: 10px;
     font-size: small;
     color: white;
-    background-color: red; /* You can choose any color */
+    background-color: red; 
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -165,5 +157,14 @@ h3 {
 }
 
 .delete-review:hover {
-    background-color: darkred; /* Darker red on hover */
+    background-color: darkred;
+}
+.review-rating .star {
+    cursor: pointer;
+    font-size: 20px;
+    color: lightgray; 
+}
+
+.review-rating .star.filled {
+    color: gold; 
 }

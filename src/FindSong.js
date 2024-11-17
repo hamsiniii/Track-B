@@ -25,18 +25,17 @@ const FindSong = () => {
       const response = await axios.get(`http://localhost:5000/search?query=${query}`);
       const fetchedResults = response.data;
 
-      // Fetch images for artist results
       const updatedResults = await Promise.all(
         fetchedResults.map(async (item) => {
           if (item.type === 'artist') {
             const image = await fetchArtistImage(item.id);
-            return { ...item, coverart: image }; // Add the image to the result
+            return { ...item, coverart: image }; 
           }
           return item;
         })
       );
 
-      setResults(updatedResults); // Populate results with data from the backend, including images
+      setResults(updatedResults); 
       setError('');
     } catch (err) {
       setError('Error fetching search results.');
@@ -46,7 +45,7 @@ const FindSong = () => {
 
   return (
     <div className="find-song-container">
-      <h2>Find Your Song</h2>
+      <h2>Find Your Song/Artist/Album</h2>
       <form onSubmit={handleSearch} className="find-song-form">
         <input
           type="text"

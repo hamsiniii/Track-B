@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Review.css';
 
+
 const Review = ({ user }) => {
     const { type, id } = useParams();
     const navigate = useNavigate();
@@ -11,6 +12,9 @@ const Review = ({ user }) => {
     const [reviews, setReviews] = useState([]);
     const [newReview, setNewReview] = useState('');
     const [rating, setRating] = useState(0);
+    const [editMode, setEditMode] = useState(null);
+    const [editedReview, setEditedReview] = useState('');
+    const [editedRating, setEditedRating] = useState(0);
 
     useEffect(() => {
         const fetchDetails = async () => {
@@ -34,7 +38,6 @@ const Review = ({ user }) => {
         const fetchReviews = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/reviews/${type}/${id}`);
-                console.log('Fetched Reviews:', response.data); // Log the fetched reviews
                 setReviews(response.data);
             } catch (error) {
                 console.error('Error fetching reviews:', error);
@@ -80,6 +83,9 @@ const Review = ({ user }) => {
     };
 
     const handleDeleteReview = async (reviewId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this review?');
+        if (!confirmDelete) return;
+
         try {
             await axios.delete(`http://localhost:5000/reviews/${reviewId}`);
             const updatedReviews = await axios.get(`http://localhost:5000/reviews/${type}/${id}`);
@@ -89,8 +95,33 @@ const Review = ({ user }) => {
         }
     };
 
+    const handleEditReview = (review) => {
+        setEditMode(review.reviewid);
+        setEditedReview(review.review);
+        setEditedRating(review.rating);
+    };
+
+    const handleConfirmEdit = async (reviewId) => {
+        try {
+            await axios.put(`http://localhost:5000/review/${reviewId}`, {
+                comment: editedReview,
+                rating: editedRating,
+            });
+            setReviews(reviews.map((review) =>
+                review.reviewid === reviewId ? { ...review, review: editedReview, rating: editedRating } : review
+            ));
+            setEditMode(null);  // Exit edit mode
+        } catch (error) {
+            console.error('Error updating review:', error);
+        }
+    };
+
     const handleRatingChange = (index) => {
         setRating(index);
+    };
+
+    const handleEditRatingChange = (index) => {
+        setEditedRating(index);
     };
 
     if (!details) return <div>Loading...</div>;
@@ -154,9 +185,7 @@ const Review = ({ user }) => {
                 {reviews.map((review) => (
                     <li key={review.reviewid} className="review-item">
                         <div className="review-header">
-                            <strong>
-                                {review.username}
-                            </strong>
+                            <strong>{review.username}</strong>
                             <span className="review-header">
                                 {review.user_role === 'critic' && (
                                     <span className="badge">
@@ -167,15 +196,46 @@ const Review = ({ user }) => {
                             </span>
                         </div>
                         <div className="review-rating">
-                            {Array.from({ length: review.rating }, (_, i) => (
-                                <span key={i} className="star filled">★</span>
-                            ))}
+                            {editMode === review.reviewid ? (
+                                 Array.from({ length: 5 }, (_, i) => (
+                                    <span
+                                        key={i}
+                                        className={`star ${i < editedRating ? 'filled' : ''}`}
+                                        onClick={() => handleEditRatingChange(i + 1)} 
+                                    >
+                                        ★
+                                    </span>
+                                ))
+                            ) : (
+                                Array.from({ length: review.rating }, (_, i) => (
+                                    <span key={i} className="star">★</span>
+                                ))
+                            )}
                         </div>
-                        <p>{review.review}</p>
-                        {user && user.id === review.userid && ( // Show delete button only for current user's reviews
-                            <button onClick={() => handleDeleteReview(review.reviewid)} className="delete-review">
-                                Delete
-                            </button>
+                        {editMode === review.reviewid ? (
+                            <>
+                                <textarea
+                                    value={editedReview}
+                                    onChange={(e) => setEditedReview(e.target.value)}
+                                    className="edit-review-input"
+                                />
+                                <br></br>
+                                <button onClick={() => handleConfirmEdit(review.reviewid)} className="confirm-edit">
+                                    Confirm
+                                </button>
+                            </>
+                        ) : (
+                            <p>{review.review}</p>
+                        )}
+                        {user && user.id === review.userid && ( 
+                            <>
+                                <button onClick={() => handleEditReview(review)} className="edit-review">
+                                    Edit
+                                </button>
+                                <button onClick={() => handleDeleteReview(review.reviewid)} className="delete-review">
+                                    Delete
+                                </button>
+                            </>
                         )}
                     </li>
                 ))}
